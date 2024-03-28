@@ -40,7 +40,7 @@ class ProductManager {
 
             arrayProductos.push(nuevoProducto);
 
-            await this.guardarArchivo(this.products);
+            await this.guardarArchivo(arrayProductos);
         } catch (error) {
             console.log("Error al agregar producto", error);
             throw error;
