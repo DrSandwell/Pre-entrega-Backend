@@ -1,21 +1,9 @@
 const express = require("express");
-const router = express.Router(); 
+const router = express.Router();
 
-const ProductManager = require("../controllers/productManager.js");
-const productManager = new ProductManager("./src/models/productos.json");
-
-router.get("/",  async (req, res) => {
-    try {
-        const productos = await productManager.getProducts();
-        res.render("home", {productos:productos});
-    } catch (error) {
-        res.status(500).json({error: "Error interno del servidor"})
-    }
+router.get("/", async (req, res) => {
+    res.render("chat");
 })
 
-
-router.get("/realtimeproducts",  (req, res) => {
-    res.render("realtimeproducts");
-})
 
 module.exports = router; 

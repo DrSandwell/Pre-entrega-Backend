@@ -1,15 +1,17 @@
 const express = require("express");
-const app= express();
-const PUERTO = 8080;
+const app = express();
 const exphbs = require("express-handlebars");
 const socket = require("socket.io");
-const productRouter = require("./routes/products.router");
-const cartsRouter= require("./routes/carts.router");
+const PUERTO = 8080;
+require("./database.js");
+
+const productsRouter = require("./routes/products.router.js");
+const cartsRouter = require("./routes/carts.router.js");
 const viewsRouter = require("./routes/views.router.js");
 
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("./src/public"));
 
 
@@ -18,31 +20,29 @@ app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
-app.use("/api", productRouter);
-app.use("/api", cartsRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter);
 
 const httpServer = app.listen(PUERTO, () => {
     console.log(`Puerto: ${PUERTO}`);
 })
 
+
+const MessageModel = require("./models/message.model.js");
 const io = socket(httpServer);
 
-const ProductManager = require("./controllers/productManager.js");
-const productManager = new ProductManager("./src/models/productos.json");
+io.on("connection", (socket) => {
+    console.log("Nuevo usuario conectado");
 
-io.on("connection", async (socket) => {
-    console.log("Un cliente conectado");
+    socket.on("message", async data => {
 
-    socket.emit("productos", await productManager.getProducts());
+        //Guardo el mensaje en MongoDB: 
+        await MessageModel.create(data);
 
-    socket.on("eliminarProducto", async (id) => {
-        await productManager.deleteProduct(id);
-        socket.emit("productos", await productManager.getProducts());
-    })
-
-    socket.on("agregarProducto", async (producto) => {
-        await productManager.addProduct(producto);
-        socket.emit("productos", await productManager.getProducts());
+        //Obtengo los mensajes de MongoDB y se los paso al cliente: 
+        const messages = await MessageModel.find();
+        console.log(messages);
+        io.sockets.emit("message", messages);
     })
 })
