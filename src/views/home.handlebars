@@ -1,3 +1,16 @@
+{{#if user}}
+<header>
+    <h1>Mi perfil</h1>
+    <p>Bienvenido!, {{user.first_name}} {{user.last_name}}!</p>
+    <p>Rol: {{user.role}} </p>
+    <p>Email: {{user.email}}</p>
+    <p>Edad: {{user.age}}</p>
+    <a href="/api/sessions/logout">Logout</a>
+</header>
+{{/if}}
+
+<hr>
+
 <div class="container">
     <h1>Listado de Productos</h1>
     <ul>
@@ -5,6 +18,7 @@
         <li><strong>{{this.titulo}}</strong></li>
         <li>{{this.descripcion}}</li>
         <li>Precio: ${{this.precio}}</li>
+        <button> Agregar al Carrito </button>
         <hr>
         {{/each}}
     </ul>

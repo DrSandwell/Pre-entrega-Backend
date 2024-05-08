@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const CartManager = require("../controllers/cart-manager.js");
 const cartManager = new CartManager();
+const CartModel = require("../models/cart.model.js");
 
 router.post("/", async (req, res) => {
     try {
@@ -17,11 +18,17 @@ router.get("/:cid", async (req, res) => {
     const cartId = req.params.cid;
 
     try {
-        const carrito = await cartManager.getCarritoById(cartId);
-        res.json(carrito.products);
+        const carrito = await CartModel.findById(cartId)
+
+        if (!carrito) {
+            console.log("No existe ese carrito con el id");
+            return res.status(404).json({ error: "Carrito no encontrado" });
+        }
+
+        return res.json(carrito.products);
     } catch (error) {
-        console.error("Error al obtener carrito", error);
-        res.status(500).json({ error: "Error del servidor" });
+        console.error("Error al obtener el carrito", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
 });
 
