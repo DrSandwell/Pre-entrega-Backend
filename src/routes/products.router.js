@@ -1,74 +1,42 @@
 const express = require("express");
 const router = express.Router();
-
 const ProductManager = require("../controllers/productManager.js");
 const productManager = new ProductManager();
-const ProductModel = require("../models/product.model.js");
 
 
 router.get("/", async (req, res) => {
     try {
-        const limit = parseInt(req.query.limit) || 5;
-        const page = parseInt(req.query.page) || 1;
-        const sort = req.query.sort || "";
-        const query = req.query.query || "";
+        const { limit = 10, page = 1, sort, query } = req.query;
 
-        const queryOptions = {};
-        if (query) {
-            queryOptions.category = query;
-        }
-
-        let sortOptions = {};
-        if (sort === "asc") {
-            sortOptions = { price: 1 };
-        } else if (sort === "desc") {
-            sortOptions = { price: -1 };
-        }
-
-        const products = await ProductModel.paginate(queryOptions, {
-            page: page,
-            limit: limit,
-            sort: sortOptions,
-            lean: true 
+        const productos = await productManager.getProducts({
+            limit: parseInt(limit),
+            page: parseInt(page),
+            sort,
+            query,
         });
 
-        const totalPages = products.totalPages;
-        const hasNextPage = products.hasNextPage;
-        const hasPrevPage = products.hasPrevPage;
+        res.json({
+            status: 'success',
+            payload: productos,
+            totalPages: productos.totalPages,
+            prevPage: productos.prevPage,
+            nextPage: productos.nextPage,
+            page: productos.page,
+            hasPrevPage: productos.hasPrevPage,
+            hasNextPage: productos.hasNextPage,
+            prevLink: productos.hasPrevPage ? `/api/products?limit=${limit}&page=${productos.prevPage}&sort=${sort}&query=${query}` : null,
+            nextLink: productos.hasNextPage ? `/api/products?limit=${limit}&page=${productos.nextPage}&sort=${sort}&query=${query}` : null,
+        });
 
-        if (req.accepts("html")) {
-            res.render("home", {
-                productos: products.docs,
-                hasPrevPage,
-                hasNextPage,
-                prevPage: hasPrevPage ? page - 1 : null,
-                nextPage: hasNextPage ? page + 1 : null,
-                currentPage: page,
-                totalPages: totalPages
-            });
-        } else {
-            const response = {
-                status: "success",
-                payload: products.docs,
-                totalPages: totalPages,
-                prevPage: hasPrevPage ? page - 1 : null,
-                nextPage: hasNextPage ? page + 1 : null,
-                page: page,
-                hasPrevPage: hasPrevPage,
-                hasNextPage: hasNextPage,
-                prevLink: hasPrevPage ? `/api/products?limit=${limit}&page=${page - 1}&sort=${sort}&query=${query}` : null,
-                nextLink: hasNextPage ? `/api/products?limit=${limit}&page=${page + 1}&sort=${sort}&query=${query}` : null
-            };
-            res.json(response);
-        }
     } catch (error) {
         console.error("Error al obtener productos", error);
         res.status(500).json({
-            status: "error",
-            message: "Error interno del servidor"
+            status: 'error',
+            error: "Error interno del servidor"
         });
     }
 });
+
 
 router.get("/:pid", async (req, res) => {
     const id = req.params.pid;
