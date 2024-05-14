@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const UserModel = require("../models/user.model.js");
-const { isValidPassword } = require("../utils/hashbcryp.js");
+const passport = require("passport");
 
-
-router.post("/login", async (req, res) => {
+/* router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     try {
         const usuario = await UserModel.findOne({ email: email });
@@ -32,8 +30,27 @@ router.post("/login", async (req, res) => {
         res.status(400).send({ error: "Error en el login" });
     }
 })
+ */
 
+router.post("/login", passport.authenticate("login", {
+    failureRedirect: "api/session/faillogin"
+}), async(req,res)=>{
+    if(!req.user){
+        return res.status(400).send("Credenciales invalidad");
+    }
+    req.session.user= {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        age: req.user.age,
+        email: req.user.email
+    };
+    req.session.login= true;
+    res.redirect("/profile");
+})
 
+router.get("/faillogin", async(req, res)=>{
+    res.send("Fallo en el login");
+})
 router.get("/logout", (req, res) => {
     if (req.session.login) {
         req.session.destroy();
