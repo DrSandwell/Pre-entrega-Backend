@@ -3,6 +3,7 @@ const app = express();
 const exphbs = require("express-handlebars");
 const session = require("express-session");
 const PUERTO = 8080;
+const MongoStore = require("connect-mongo");
 require("./database.js");
 
 const productsRouter = require("./routes/products.router.js");
@@ -22,9 +23,9 @@ app.use(session({
     secret:"secretCoder",
     resave: true, 
     saveUninitialized:true, 
-    /* store: MongoStore.create({
+    store: MongoStore.create({
         mongoUrl: "mongodb+srv://nikesandwell:coderhouse@cluster0.e8kmgzn.mongodb.net/Comercio?retryWrites=true&w=majority&appName=Cluster0"
-    }) */  
+    })  
 }))
 
 app.use(passport.initialize());

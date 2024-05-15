@@ -70,6 +70,14 @@ router.get("/login", (req, res) => {
     res.render("login");
 });
 
+router.get("/", (req, res) => {
+    if (req.session.login) {
+        return res.redirect("/products");
+    }
+
+    res.render("login");
+});
+
 router.get("/register", (req, res) => {
     if (req.session.login) {
         return res.redirect("/profile");
