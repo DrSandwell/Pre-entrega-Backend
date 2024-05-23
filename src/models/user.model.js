@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
+    usuario: String, 
     first_name: {
         type: String,
         required: true
@@ -31,6 +32,10 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ['admin', 'usuario'],
         default: 'usuario'
+    },
+    cart: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'carts'
     }
 });
 

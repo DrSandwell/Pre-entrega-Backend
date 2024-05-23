@@ -11,7 +11,7 @@ const initializePassport = ()=>{
         passReqToCallback: true,
         usernameField: "email"
     }, async (req, username, password, done)=>{
-        const {first_name, last_name, email, age}=req.body;
+        const {first_name, last_name, email, age, role}=req.body;
         try{
             let usuario = await UserModel.findOne({email});
             if(usuario) {
@@ -22,7 +22,8 @@ const initializePassport = ()=>{
                 last_name,
                 email,
                 age,
-                password: createHash(password)
+                password: createHash(password),
+                role
             }
             let resultado= await UserModel.create(nuevoUsuario);
             return done(null,resultado);
@@ -73,7 +74,8 @@ const initializePassport = ()=>{
                     last_name: "",
                     age: 36,
                     email: profile._json.email,
-                    password: ""
+                    password: "",
+                    role: "usuario"
                 }
                 let resultado = await UserModel.create(nuevoUsuario);
                 done(null,resultado);
@@ -87,4 +89,3 @@ const initializePassport = ()=>{
 }
 
 module.exports = initializePassport
-

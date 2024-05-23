@@ -42,6 +42,10 @@ app.use("/api/users", userRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/", viewsRouter);
 
+app.use("*", (req, res) => {
+    res.status(404).send("Recurso no encontrado");
+});
+
 app.listen(PUERTO, () => {
     console.log(`Puerto: ${PUERTO}`);
 })

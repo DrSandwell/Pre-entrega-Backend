@@ -17,7 +17,6 @@ router.get("/products", async (req, res) => {
             const { _id, ...rest } = producto.toObject();
             return rest;
         });
-
         res.render("products", {
             user: req.session.user,
             productos: nuevoArray,
@@ -27,7 +26,8 @@ router.get("/products", async (req, res) => {
             nextPage: productos.nextPage,
             currentPage: productos.page,
             totalPages: productos.totalPages
-        });
+        })
+        
 
     } catch (error) {
         console.error("Error al obtener productos", error);
@@ -72,7 +72,7 @@ router.get("/login", (req, res) => {
 
 router.get("/", (req, res) => {
     if (req.session.login) {
-        return res.redirect("/products");
+        return res.redirect("/products");        
     }
 
     res.render("login");
