@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
+const { MONGODB_URI } = require("./config/config.js");
 
-
-mongoose.connect("mongodb+srv://nikesandwell:coderhouse@cluster0.e8kmgzn.mongodb.net/Comercio?retryWrites=true&w=majority&appName=Cluster0")
-    .then(() => console.log("Conexion exitosa"))
-    .catch((error) => console.log("Error en la conexion", error))
-
-
+mongoose.connect(MONGODB_URI).then(() => console.log("Conexión exitosa a la base de datos"))
+    .catch((error) => console.error("Error en la conexión a la base de datos", error));

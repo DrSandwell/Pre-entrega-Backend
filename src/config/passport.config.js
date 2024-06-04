@@ -3,6 +3,7 @@ const local = require("passport-local");
 const GitHubStrategy = require ("passport-github2");
 const UserModel = require("../models/user.model.js");
 const { createHash, isValidPassword } = require("../utils/hashbcryp.js");
+const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET} = require("../config/config.js");
 
 const LocalStrategy= local.Strategy;
 
@@ -59,8 +60,8 @@ const initializePassport = ()=>{
     })
 
     passport.use("github", new GitHubStrategy({
-        clientID: "Iv23liG5LZb2DW0eFunx",
-        clienteSecret: "756d84ffa1a2f1203720b73541acb777183bcc88",
+        clientID: GITHUB_CLIENT_ID,
+        clienteSecret: GITHUB_CLIENT_SECRET,
         callbackURL: "http://localhost:8080/api/sessions/githubcallback"
     }, async(accessToken, refeshToken, profile, done)=>{
         console.log("Profile:", profile);
@@ -85,7 +86,7 @@ const initializePassport = ()=>{
         }catch(error){
             return done(error);
         }
-    }))
+    }))   
 }
 
 module.exports = initializePassport
