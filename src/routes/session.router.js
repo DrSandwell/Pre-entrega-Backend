@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const UserDTO = require('../dtos/user.dto');
 const passport = require("passport");
 
 
@@ -40,17 +41,12 @@ router.get("/githubcallback", passport.authenticate("github", {
     res.redirect("/profile");
 }))
 
-router.get("/current", (req, res) => {
+router.get('/current', (req, res) => {
     if (req.isAuthenticated()) {
-        // Si el usuario está autenticado, devolver su información
-        res.status(200).json({
-            user: req.user
-        });
+        const userDTO = new UserDTO(req.user);
+        res.json(userDTO);
     } else {
-        // Si no está autenticado, devolver un mensaje de error
-        res.status(401).json({
-            message: "Usuario no autenticado"
-        });
+        res.status(401).json({ message: 'Unauthorized' });
     }
 });
 
