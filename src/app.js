@@ -7,7 +7,7 @@ const passport = require("passport");
 
 const initializePassport = require("./config/passport.config.js");
 const auth = require("./middlewares/auth.middleware.js");
-const {PORT} = require('./config/config');
+const {PORT} = require('./config/config.js');
 const path = require('path');
 require("./database.js");
 

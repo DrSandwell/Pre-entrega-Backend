@@ -15,7 +15,11 @@ const cartSchema = new Schema({
             }
         }
     ]
+},{ timestamps: true, versionKey: false } );
+
+cartSchema.pre('findOne', function (next) {
+    this.populate('products.product', '_id title price');
+    next();
 });
 
-const Cart = mongoose.model('carts', cartSchema);
-module.exports = Cart;
+module.exports = mongoose.model('carts', cartSchema);

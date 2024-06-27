@@ -1,5 +1,6 @@
 const Ticket = require("../models/ticket.model.js");
 const User = require("../models/user.model.js");
+
 const CartRepository = require("../repositories/carts.repository.js");
 const totalCompra = require("../utils/util.js");
 
@@ -7,7 +8,7 @@ const cartRep = new CartRepository();
 
 class CartController {
 
-    async crearCarrito(req, res) {
+    async createCart(req, res) {
         try {
             const nuevoCarrito = await cartRep.createCart();
             res.json(nuevoCarrito);
@@ -16,7 +17,7 @@ class CartController {
         }
     }
 
-    async getCarritoById(req, res) {
+    async getProductsToCart(req, res) {
         const cartId = req.params.cid;
         try {
             const products = await cartRep.obtenerProductosDeCarrito(cartId);
@@ -29,7 +30,7 @@ class CartController {
         }
     }
 
-    async agregarProductoAlCarrito(req, res) {
+    async addProductsToCart(req, res) {
         const cartId = req.params.cid;
         const productId = req.params.pid;
         const quantity = req.body.quantity || 1;
@@ -43,7 +44,7 @@ class CartController {
         }    
     }
 
-    async actualizarCarrito(req, res) {
+    async updateProductsToCart(req, res) {
         const cartId = req.params.cid;
         const updatedProducts = req.body;
         try {
@@ -54,7 +55,7 @@ class CartController {
         }
     }
 
-    async actualizarCantidadDeProducto(req, res) {
+    async updateQuantity(req, res) {
         const cartId = req.params.cid;
         const productId = req.params.pid;
         const newQuantity = req.body.quantity;
@@ -71,7 +72,7 @@ class CartController {
 
     }
 
-    async eliminarProductoDelCarrito(req, res) {
+    async deleteProductToCart(req, res) {
         const cartId = req.params.cid;
         const productId = req.params.pid;
         try {
@@ -86,7 +87,7 @@ class CartController {
         }
     }
     
-    async vaciarCarrito(req, res) {
+    async emptyCart(req, res) {
         const cartId = req.params.cid;
         try {
             const updatedCart = await cartRep.emptyCart(cartId);
@@ -100,7 +101,7 @@ class CartController {
         }
     }
 
-    async finalizarCompra(req,res){
+    async finishPurchase(req,res){
         const cartId= req.params.cid;
         try {
             const cart = await cartRep.obtenerProductosDeCarrito(cartId);

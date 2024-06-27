@@ -1,6 +1,8 @@
 <h1>Mi perfil</h1>
-<p>Bienvenido!, {{user.first_name}}  {{user.last_name}}!</p>
-<p>Email:  {{user.email}}</p>
-<p>Edad:  {{user.age}}</p>
-<p>Rol: {{user.role}}</p>
-<a href="/api/sessions/logout">Logout</a>
+<p>Bienvenido!, {{user.name}} {{user.surname}}!</p>
+<p>Rol: {{user.rol}}</p>
+{{#if this.isAdmin}}
+<a href="/realtimeproducts" ><span>Administrador de productos </span></a>
+{{/if}}
+<form action="/api/users/logout" method="POST">
+    <button type="submit">Salir</button>

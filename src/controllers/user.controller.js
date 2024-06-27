@@ -20,14 +20,15 @@ class UserController {
             await nuevoCarrito.save();
 
             const nuevoUsuario = new UserModel({
-                firstName,
-                lastName,
+                first_name,
+                last_name,
                 email,
                 cart: nuevoCarrito._id,
                 password: createHash(password),
+                age
             });
             await nuevoUsuario.save();
-            const token = jwt.sign({ user: newUser }, JWT_SECRET, {
+            const token = jwt.sign({ user: nuevoUsuario }, JWT_SECRET, {
                 expiresIn: "1h"
             });
             res.cookie(COOKIE_TOKEN, token, {
@@ -66,7 +67,7 @@ class UserController {
         }
     }
     async profile(req, res) {
-        const dto = new DTO(req.user.firstName, req.user.lastName, req.user.role);
+        const dto = new DTO(req.user.first_name, req.user.last_name, req.user.role);
         const isAdmin = req.user.role === 'admin';
         res.render("profile", { user: dto, isAdmin });
     }

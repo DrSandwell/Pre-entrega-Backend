@@ -1,32 +1,71 @@
-{{#if user}}
-<header>
-    <h1>Mi perfil</h1>
-    <p>Bienvenido! {{user.first_name}} {{user.last_name}}!</p>
-    <p>Rol: {{user.role}} </p>
-    <a href="/api/sessions/logout">Logout</a>
-</header>
-{{/if}}
+<div>
+    <h5>
+        Listado de Productos
+    </h5>
+    <a href="/carts/{{cartId}}"> Carrito de compras
+    </a>
+</div>
+{{> filterMenu}}
+<div>
+    {{#each productos}}
+    <div>
+        <div>
+            <div>
+                Codigo del producto: {{code}}
+            </div>
+            <div>
+                <ul>
+                    <li>
+                        <img src="{{thumbnail}}" alt="{{title}}">
+                    </li>
+                    <li>
+                        <h5>
+                            {{title}}
+                        </h5>
+                    </li>
+                    <li>
+                        <p><span>Unidades
+                                disponibles:</span> {{stock}}
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <span>
+                                Precio:
+                            </span>
+                            ${{price}}
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <span>
+                                Categoria:
+                            </span>
+                            {{category}}
+                        </p>
+                    </li>
+                </ul>
+                <div>
+                    <form action="/api/carts/{{../cartId}}/product/{{id}}" method="POST">
+                        <button type="submit">
+                            Agregar al Carrito
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>
 
-<hr>
-
-<div class="container">
-    <h1>Listado de Productos</h1>
-    <ul>
-        {{#each productos}}
-        <li><strong>{{titulo}}</strong></li>
-        <li>{{descripcion}}</li>
-        <li>Precio: ${{precio}}</li>
-        <button> Agregar al Carrito </button>
-        <hr>
-        {{/each}}
-    </ul>
-    <div class="pagination">
-        {{#if hasPrevPage}}
-        <a href="/products?page={{prevPage}}">Anterior</a>
-        {{/if}}
-        {{#if hasNextPage}}
-        <a href="/products?page={{nextPage}}">Siguiente</a>
-        {{/if}}
-        <p>Página {{currentPage}} de {{totalPages}}</p>
+<div>
+    <div>
+        <p>
+            <a href="/products?page={{prevPage}}">Prev
+            </a>
+            {{currentPage}} / {{totalPages}}
+            <ahref="/products?page={{nextPage}}">Next
+            </a>
+        </p>
     </div>
 </div>

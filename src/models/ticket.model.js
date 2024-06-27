@@ -16,7 +16,7 @@ const ticketSchema = new Schema({
         ref: 'User',
         required: true
     }
-});
+},{ timestamps: true, versionKey: false } );
 
-const Ticket = mongoose.model('Ticket', ticketSchema);
-module.exports = Ticket;
+module.exports =mongoose.model('Ticket', ticketSchema);
+

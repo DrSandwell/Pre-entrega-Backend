@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const configObject = require("../config/env.config");
+const { GMAIL_PASSWORD, MAIL_USER } = require("../config/config.js")
 
 class EmailManager {
     constructor() {
@@ -7,16 +7,16 @@ class EmailManager {
             service: "gmail",
             port: 587,
             auth: {
-                user: configObject.mailer.mailer_user,
-                pass: configObject.mailer.mailer_pass,
+                user: MAIL_USER ,
+                pass: GMAIL_PASSWORD,
             },
         });
     }
 
-    async enviarCorreoCompra(email, firstName, ticket) {
+    async enviarCorreoCompra(email, first_name, ticket) {
         try {
             const Opt = {
-                from: "nikesandwell@gmail.com>",
+                from: MAIL_USER ,
                 to: email,
                 subject: "compra exitosa",
                 html: `

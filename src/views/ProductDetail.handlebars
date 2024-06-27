@@ -1,0 +1,24 @@
+{{#if user}}
+<header>
+    <h1>Mi perfil</h1>
+    <p>Bienvenido! {{user.first_name}} {{user.last_name}}!</p>
+    <p>Rol: {{user.role}} </p>
+    <a href="/api/sessions/logout">Logout</a>
+</header>
+{{/if}}
+
+<hr>
+
+<div class="container">
+    <h1>Listado de Productos</h1>
+    <ul>
+        {{#each product}}
+        <img src="{{this.thumbnail}}" alt="{{this.title}}" />
+        <li><strong>{{title}}</strong></li>
+        <li>{{descripcion}}</li>
+        <li>{{category}}</li>
+        <li>Precio: ${{price}}</li>
+        <hr>
+        {{/each}}
+    </ul>
+</div>

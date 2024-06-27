@@ -1,7 +1,7 @@
 <main>
     <section>
         <h1>Iniciar sesión</h1>
-        <form action="/api/sessions/login" method="POST">
+        <form action="/api/users/login" method="POST">
             <label for="email">Correo electrónico:</label>
             <input type="email" id="email" name="email" required>
             <br><br>
@@ -11,6 +11,5 @@
             <button type="submit">Iniciar sesión</button>
             <button type="button" onclick="window.location.href='/register'">Registrarse</button>
         </form>
-        <a href="/api/sessions/github">Iniciar sesión con GitHub</a>
     </section>
 </main>
