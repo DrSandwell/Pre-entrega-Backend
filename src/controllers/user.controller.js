@@ -1,17 +1,17 @@
 const jwt = require("jsonwebtoken");
 
-const UserModel = require("../models/user.model.js");
+const User = require("../models/user.model.js");
 const CartModel = require("../models/cart.model.js");
 
+const { JWT_SECRET, COOKIE_TOKEN } = require("../config/config.js");
 const { createHash, isValidPassword } = require("../utils/hashbcryp.js");
 const DTO  = require("../dto/user.dto.js");
-const { JWT_SECRET, COOKIE_TOKEN } = require("../config/config.js");
 
 class UserController {
     async register(req, res) {
         const { first_name, last_name, email, password, age } = req.body;
         try {
-            const existeUsuario = await UserModel.findOne({ email });
+            const existeUsuario = await User.findOne({ email });
             if (existeUsuario) {
                 return res.status(400).send("El usuario ya existe");
             }
@@ -19,7 +19,7 @@ class UserController {
             const nuevoCarrito = new CartModel();
             await nuevoCarrito.save();
 
-            const nuevoUsuario = new UserModel({
+            const nuevoUsuario = new User({
                 first_name,
                 last_name,
                 email,
@@ -44,7 +44,7 @@ class UserController {
     async login(req, res) {
         const { email, password } = req.body;
         try {
-            const userFound = await UserModel.findOne({ email });
+            const userFound = await User.findOne({ email });
 
             if (!userFound) {
                 return res.status(401).send("Credenciales incorrectas");

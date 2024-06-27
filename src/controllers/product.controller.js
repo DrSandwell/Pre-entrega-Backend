@@ -24,22 +24,6 @@ class ProductController {
         }
     }
 
-    async getProductById(id) {
-        try {
-            const producto = await Product.findById(id);
-            if (!producto) {
-                console.log("Producto no encontrado, vamos a morir");
-                return null;
-            }
-
-            console.log("Producto encontrado");
-            return producto;
-        } catch (error) {
-            console.log("Error al recuperar producto por ID", error);
-            throw error;
-        }
-    }
-
     async updateProduct(req,res) {
         try {
             const id = req.params.pid;

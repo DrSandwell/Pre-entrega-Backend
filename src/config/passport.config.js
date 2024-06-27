@@ -2,8 +2,8 @@ const passport = require("passport");
 const jwt = require("passport-jwt");
 const GitHubStrategy = require ("passport-github2");
 
-const UserModel = require("../models/user.model.js");
-const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, JWT_SECRET, COOKIE_TOKEN } = require("../config/config.js");
+const User = require("../models/user.model.js");
+const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, JWT_SECRET, COOKIE_TOKEN } = require("./config.js");
 
 const JWTStrategy = jwt.Strategy;
 const Jwt = jwt.ExtractJwt;
@@ -14,7 +14,7 @@ const initializePassport = () => {
         secretOrKey: JWT_SECRET
     }, async (jwt_payload, done) => {
         try {
-            const user = await UserModel.findById(jwt_payload.user._id);
+            const user = await User.findById(jwt_payload.user._id);
             if (!user) {
                 return done(null, false);
             }

@@ -1,5 +1,5 @@
 class UserDTO {
-    constructor({ firstName, lastName, role }) {
+    constructor(firstName, lastName, role) {
         this.name = firstName;
         this.surName = lastName;
         this.rol = role;
