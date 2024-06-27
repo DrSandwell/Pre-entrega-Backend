@@ -1,15 +1,17 @@
-const isAdmin = (req, res, next) => {
-    if (req.isAuthenticated() && req.user.role === 'admin') {
-        return next();
-    }
-    res.status(403).json({ message: 'Forbidden' });
-};
+const passport = require('passport');
 
-const isUser = (req, res, next) => {
-    if (req.isAuthenticated() && req.user.role === 'user') {
-        return next();
-    }
-    res.status(403).json({ message: 'Forbidden' });
-};
+function authMiddleware(req, res, next) {
+    passport.authenticate('jwt', { session: false }, (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            req.user = null;
+        } else {
+            req.user = user;
+        }
+        next();
+    })(req, res, next);
+}
 
-module.exports = { isAdmin, isUser };
+module.exports = authMiddleware;
