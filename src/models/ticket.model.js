@@ -4,8 +4,8 @@ const { Schema } = mongoose;
 const ticketSchema = new Schema({
     code: {
         type: String,
-        required: true,
-        unique: true
+        unique: true,
+        required: true
     },
     amount: {
         type: Number,
@@ -13,10 +13,10 @@ const ticketSchema = new Schema({
     },
     purchaser: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true
     }
 },{ timestamps: true, versionKey: false } );
 
-module.exports =mongoose.model('Ticket', ticketSchema);
+module.exports = mongoose.model('Ticket', ticketSchema);
 
