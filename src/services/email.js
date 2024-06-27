@@ -13,10 +13,10 @@ class EmailManager {
         });
     }
 
-    async enviarCorreoCompra(email, first_name, ticket) {
+    async enviarCorreoCompra(email, firstName, ticket) {
         try {
             const Opt = {
-                from: "Skate & Destroy<gbrlcstrrmrz@gmail.com>",
+                from: "nikesandwell@gmail.com>",
                 to: email,
                 subject: "compra exitosa",
                 html: `

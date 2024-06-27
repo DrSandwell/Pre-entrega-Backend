@@ -1,5 +1,6 @@
 const passport = require("passport");
 const jwt = require("passport-jwt");
+const GitHubStrategy = require ("passport-github2");
 
 const UserModel = require("../models/user.model.js");
 const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, JWT_SECRET, COOKIE_TOKEN } = require("../config/config.js");
@@ -50,15 +51,14 @@ const initializePassport = () => {
         } catch (error) {
             return done(error);
         }
-    }))
-
-    const cookieExtractor = (req) => {
-        let token = null;
-        if (req && req.cookies) {
-            token = req.cookies[COOKIE_TOKEN]
-        }
-        return token;
+    }))  
+}
+const cookieExtractor = (req) => {
+    let token = null;
+    if (req && req.cookies) {
+        token = req.cookies[COOKIE_TOKEN]
     }
+    return token;
 }
 
 module.exports = initializePassport

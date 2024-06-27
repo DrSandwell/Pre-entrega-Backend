@@ -1,64 +1,55 @@
 const express = require("express");
-const app = express();
-const exphbs = require("express-handlebars");
-const session = require("express-session");
-const dotenv = require("dotenv");
-const config = require("./config/config.js");
+const { engine }= require("express-handlebars");
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 const passport = require("passport");
-const { SESSION_SECRET, MONGODB_URI } = require('./config/config');
-const mongoose = require('mongoose');
-const initializePassport = require("./config/passport.config.js");
-const MongoStore = require("connect-mongo");
 
+const initializePassport = require("./config/passport.config.js");
+const auth = require("./middlewares/auth.middleware.js");
+const {PORT} = require('./config/config');
+const path = require('path');
 require("./database.js");
+
+
+const SocketManager = require("./sockets/socketmanager.js");
+
 
 const productsRouter = require("./routes/products.router.js");
 const cartsRouter = require("./routes/carts.router.js");
 const viewsRouter = require("./routes/views.router.js");
-const sessionRouter = require("./routes/session.router.js");
 const userRouter = require("./routes/user.router.js");
 
-dotenv.config();
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static("./src/public"));
+const app = express();
+const PUERTO = PORT;
 
-
-app.use(session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: MONGODB_URI,
-        ttl: 14 * 24 * 60 * 60 // 14 days
-    })
-}));
-
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
-app.use(passport.session());
 initializePassport();
+app.use(cookieParser());
+app.use(auth);
 
-app.engine("handlebars", exphbs.engine());
+app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", userRouter);
-app.use("/api/sessions", sessionRouter);
 app.use("/", viewsRouter);
+
 
 app.use("*", (req, res) => {
     res.status(404).send("Recurso no encontrado");
 });
 
-mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log('Conexión exitosa a la base de datos'))
-    .catch((error) => console.error('Error en la conexión a la base de datos', error));
 
-app.listen(config.PORT, () => {
-    console.log(`Servidor escuchando en el puerto: ${config.PORT}`);
+const httpServer = app.listen(PUERTO, () => {
+    console.log(`Server connected http://localhost:${PUERTO}`);
 });
+
+new SocketManager(httpServer);

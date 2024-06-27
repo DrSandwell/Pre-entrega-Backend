@@ -1,7 +1,6 @@
 const Ticket = require("../models/ticket.model.js");
 const User = require("../models/user.model.js");
-
-const CartRepository = require("../repositories/cart.repository.js");
+const CartRepository = require("../repositories/carts.repository.js");
 const totalCompra = require("../utils/util.js");
 
 const cartRep = new CartRepository();

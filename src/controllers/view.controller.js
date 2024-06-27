@@ -1,5 +1,5 @@
 const Product = require("../models/product.model.js");
-const CartRepository = require("../repositories/cart.repository.js");
+const CartRepository = require("../repositories/carts.repository.js");
 const ProductRepository = require("../repositories/product.repository.js")
 
 const productRep = new ProductRepository();
