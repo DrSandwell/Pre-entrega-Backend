@@ -1,16 +1,13 @@
 const express = require("express");
+const checkUserRole = require("../middlewares/checkrole.js");
+const ProductController = require("../controllers/product.controller.js");
+
 const router = express.Router();
-const ProductManager = require("../controllers/productManager.js");
-const productManager = new ProductManager();
+const product = new ProductController(); 
 
-
-
-router.get("/", productManager.getProducts);
-router.get("/:id", productManager.getProductById);
-router.post("/", productManager.addProduct);
-router.put("/:id", productManager.updateProduct);
-router.delete("/", productManager.deleteProduct);
-
-
+router.get("/", checkUserRole(['usuario']), product.getProducts);
+router.post("/", checkUserRole(['admin']), product.addProduct);
+router.put("/:pid", checkUserRole(['admin']), product.updateProduct);
+router.delete("/:pid", checkUserRole(['admin']), product.deleteProduct);
 
 module.exports = router;

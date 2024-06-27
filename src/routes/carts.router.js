@@ -1,18 +1,19 @@
 const express = require("express");
+const checkUserRole = require("../middlewares/checkrole.js");
+const CartController = require("../controllers/cart.controller.js");
+
+
 const router = express.Router();
-const CartManager = require("../controllers/cart-manager.js");
-const cartManager = new CartManager();
-const authMiddleware = require('../middlewares/auth.middleware.js');
+const cart = new CartController();
 
-router.use(authMiddleware);
 
-router.post("/", cartManager.crearCarrito);
-router.get("/:cid", cartManager.getCarritoById);
-router.post("/:cid/product/:pid", cartManager.agregarProductoAlCarrito);
-router.delete('/:cid/product/:pid', cartManager.eliminarProductoDelCarrito);
-router.put('/:cid', cartManager.actualizarCantidadDeProducto);
-router.put('/:cid/product/:pid', cartManager.actualizarCantidadDeProducto);
-router.delete('/:cid', cartManager.vaciarCarrito);
-router.post('/:cid/purchase', cartManager.finalizarCompra);
+router.post("/", cart.createCart);
+router.get("/:cid", checkUserRole(['usuario']), cart.getProductsToCart);
+router.post("/:cid/product/:pid", checkUserRole(['usuario']), cart.addProductsToCart);
+router.delete('/:cid/product/:pid', checkUserRole(['usuario']), cart.deleteProductToCart);
+router.put('/:cid', checkUserRole(['usuario']), cart.updateProductsToCart);
+router.put('/:cid/product/:pid', checkUserRole(['usuario']), cart.updateQuantity);
+router.delete('/:cid', checkUserRole(['usuario']), cart.emptyCart);
+router.post('/:cid/purchase', checkUserRole(['usuario']), cart.finishPurchase);
 
 module.exports = router;

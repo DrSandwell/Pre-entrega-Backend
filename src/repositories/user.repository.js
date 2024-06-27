@@ -1,17 +1,9 @@
-const { userDAO } = require('../daos/mongo');
+const User = require("../models/user.model.js");
 
 class UserRepository {
-    async getUserByEmail(email) {
-        return await userDAO.getUserByEmail(email);
-    }
-
-    async createUser(user) {
-        return await userDAO.createUser(user);
-    }
-
-    async getUserById(id) {
-        return await userDAO.getUserById(id);
+    async findByEmail(email) {
+        return User.findOne({ email });
     }
 }
 
-module.exports = new UserRepository();
+module.exports = UserRepository;

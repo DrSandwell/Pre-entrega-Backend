@@ -1,96 +1,21 @@
 const express = require("express");
+const passport = require("passport");
+
+const ViewsController = require("../controllers/view.controller.js");
+const checkUserRole = require("../middlewares/checkrole.js");
+
 const router = express.Router();
-const ProductManager = require("../controllers/productManager.js");
-const CartManager = require("../controllers/cart-manager.js");
-const productManager = new ProductManager();
-const cartManager = new CartManager();
+const views = new ViewsController();
 
-router.get("/products", async (req, res) => {
-    try {
-        const { page = 1, limit = 2 } = req.query;
-        const productos = await productManager.getProducts({
-            page: parseInt(page),
-            limit: parseInt(limit)
-        });
+router.get("/products", checkUserRole(['usuario']),passport.authenticate('jwt', { session: false }), views.products);
+router.get("/", views.login);
+router.get("/register", views.register);
+router.get("/home", checkUserRole(['usuario']), views.home);
+router.get("/realtimeproducts", checkUserRole(['admin']), views.realTimeProducts);
+router.get("/chat", checkUserRole(['usuario']), views.chat);
+router.get("/carts/:cid", checkUserRole(['usuario']), views.cart);
+router.get("/404-not-found", views.notFound);
+router.get("/access-denied", views.denied);
+router.get("/:cid/purchase", checkUserRole(['usuario']), views.ticket);
 
-        const nuevoArray = productos.docs.map(producto => {
-            const { _id, ...rest } = producto.toObject();
-            return rest;
-        });
-        res.render("products", {
-            user: req.session.user,
-            productos: nuevoArray,
-            hasPrevPage: productos.hasPrevPage,
-            hasNextPage: productos.hasNextPage,
-            prevPage: productos.prevPage,
-            nextPage: productos.nextPage,
-            currentPage: productos.page,
-            totalPages: productos.totalPages
-        })
-        
-
-    } catch (error) {
-        console.error("Error al obtener productos", error);
-        res.status(500).json({
-            status: 'error',
-            error: "Error interno del servidor"
-        });
-    }
-});
-
-router.get("/carts/:cid", async (req, res) => {
-    const cartId = req.params.cid;
-
-    try {
-        const carrito = await cartManager.getCarritoById(cartId);
-
-        if (!carrito) {
-            console.log("No existe ese carrito con el id");
-            return res.status(404).json({ error: "Carrito no encontrado" });
-        }
-
-        const productosEnCarrito = carrito.products.map(item => ({
-            product: item.product.toObject(),            
-            quantity: item.quantity
-        }));
-
-
-        res.render("carts", { productos: productosEnCarrito });
-    } catch (error) {
-        console.error("Error al obtener el carrito", error);
-        res.status(500).json({ error: "Error interno del servidor" });
-    }
-});
-
-router.get("/login", (req, res) => {
-    if (req.session.login) {
-        return res.redirect("/products");
-    }
-
-    res.render("login");
-});
-
-router.get("/", (req, res) => {
-    if (req.session.login) {
-        return res.redirect("/products");        
-    }
-
-    res.render("login");
-});
-
-router.get("/register", (req, res) => {
-    if (req.session.login) {
-        return res.redirect("/profile");
-    }
-    res.render("register");
-});
-
-router.get("/profile", (req, res) => {
-    if (!req.session.login) {
-        return res.redirect("/login");
-    }
-
-    res.render("profile", { user: req.session.user });
-});
-
-module.exports = router; 
+module.exports = router;
