@@ -1,5 +1,6 @@
 const Ticket = require("../models/ticket.model.js");
 const User = require("../models/user.model.js");
+const winston = require("winston");
 
 const CartRepository = require("../repositories/carts.repository.js");
 const {totalCompra, ticketNumberRandom} = require("../utils/util.js");
@@ -104,42 +105,19 @@ class CartController {
     async finishPurchase(req, res) {
         const cartId = req.params.cid;
         try {
-            console.error('Start finishPurchase');
-            const cart = await cartRep.obtenerProductosDeCarrito(cartId);
-            if (!cart) {
-                throw new Error('Cart not found');
-            }
-            console.error('Cart retrieved:', cart);
-            
-            const userWithCart = await User.findOne({ cart: cartId });
-            if (!userWithCart) {
-                throw new Error('User with the specified cart not found');
-            }
-            console.error('User with cart retrieved:', userWithCart);
-    
-            const totalAmount = totalCompra(cart.products);
-            if (typeof totalAmount !== 'number' || isNaN(totalAmount)) {
-                throw new Error('Invalid total amount');
-            }
-            console.error('Total amount calculated:', totalAmount);
-            
+            const cart = await cartRep.obtenerProductosDeCarrito(cartId);            
+            const userWithCart = await User.findOne({ cart: cartId }); 
             const ticket = new Ticket({
                 code: ticketNumberRandom(),
-                amount: totalAmount,
+                amount: totalAmount(cart.products),
                 purchaser: userWithCart._id
-            });
-            console.error('Ticket created:', ticket);
-    
+            });    
             await ticket.save();
-            console.error('Ticket saved');
-    
-            await cart.save();
-            console.error('Cart saved');
-    
+            await cart.save();    
             res.redirect(`/${cartId}/purchase`);
             console.error('Redirecting to purchase page');
         } catch (error) {
-            console.error('Error during purchase process:', error);
+            winston.error('Error al realizar compra, intenta nuevamente');
             res.status(500).json({ error: 'Error al comprar productos' });
         }
     }

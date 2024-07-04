@@ -1,3 +1,4 @@
+const winston = require("winston");
 const Product = require("../models/product.model.js");
 const CartRepository = require("../repositories/carts.repository.js");
 const ProductRepository = require("../repositories/product.repository.js")
@@ -42,7 +43,7 @@ class ViewsController {
             const cart = await cartRep.obtenerProductosDeCarrito(cartId);
 
             if (!cart) {
-                console.log("El carrito no existe");
+                winston.info("El carrito no existe");
                 return res.status(404).json({ error: "Carrito no encontrado" });
             }
             let totalPurchase = 0;

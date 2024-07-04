@@ -15,6 +15,7 @@ module.exports = {
     JWT_SECRET: process.env.JWT_SECRET,
     COOKIE_TOKEN: process.env.COOKIE_TOKEN,
     SECRET_KEY: process.env.SECRET_KEY,
+    NODE_ENV: process.env.NODE_ENV,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     SESSION_SECRET: process.env.SESSION_SECRET || 'default_session_secret'

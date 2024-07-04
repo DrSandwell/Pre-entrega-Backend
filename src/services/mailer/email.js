@@ -1,5 +1,7 @@
 const nodemailer = require("nodemailer");
-const { GMAIL_PASSWORD, MAIL_USER } = require("../config/config.js")
+const { GMAIL_PASSWORD, MAIL_USER } = require("../../config/config.js")
+const winston = require("winston");
+
 
 class EmailManager {
     constructor() {
@@ -26,7 +28,7 @@ class EmailManager {
             };
             await this.transporter.sendMail(Opt);
         } catch (error) {
-            console.error("Error al enviar Email:");
+            winston.error("Error al enviar Email:");
         }
     }
 }

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET, COOKIE_TOKEN } = require("../config/config.js");
 
 const checkUserRole = (allowedRoles) => (req, res, next) => {
-    const token = req.cookies.cookieToken;
+    const token = req.cookies[COOKIE_TOKEN];
     if (token) {
         jwt.verify(token, JWT_SECRET, (err, decoded) => {
             if (err) {
