@@ -17,5 +17,10 @@ router.get("/carts/:cid", checkUserRole(['usuario']), views.cart);
 router.get("/404-not-found", views.notFound);
 router.get("/access-denied", views.denied);
 router.get("/:cid/purchase", checkUserRole(['usuario']), views.ticket);
+router.get("/reset-password", views.renderResetPassword),
+router.get("/password", views.renderCambioPassword),
+router.get("/confirmacion-envio", views.renderConfirmacion),
+router.get("/products/:pid", views.renderProductDetail),
+
 
 module.exports = router;

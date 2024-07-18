@@ -60,7 +60,7 @@ class UserController {
                 maxAge: 3600000,
                 httpOnly: true
             });
-            res.redirect("/api/users/profile");
+            res.redirect("/home");
         } catch (error) {
             winston.error(error);
             res.status(500).send("Error al iniciar sesion");
@@ -82,6 +82,68 @@ class UserController {
             return res.redirect("/access-denied")
         }
         res.render("admin");
+    }
+    
+    async requestPasswordReset(req, res) {
+        const { email } = req.body;
+        try {
+            const user = await User.findOne({ email });
+            if(!user) {
+                return res.status(404).send("Usuario no encontrado");
+            }
+            const token = generarResetToken();
+            user.resetToken = {
+                token: token,
+                expire: new Date(Date.now() + 3600000)
+            }
+            await user.save();
+            await emailManager.enviarCorreoRestableciminto(email, user.first_name, token);
+            res.redirect("/confirmacion-envio");
+        }catch (error) {
+            res.status(500).send("Error interno del servidor");
+        }
+    }
+
+    async resetPassword (req, res) {
+        const { email, password, token } = req.body;
+        try{
+            const user = await User.findOne({ email });
+            if(!user) {
+                return res.render("passwordCambio", { error: "Usuario no encontrado" })
+            }
+            const resetToken = user.resetToken;
+            if(!resetToken || resetToken.token !== token) {
+                return res.render("resetpassword", {error : "Token invalido, intenta nuevamente"});
+            }
+            const now = new Date();
+            if(now > resetToken.expire){
+                return res.render("resetpassword", {error: "el token ha expirado"});
+            }
+            if(isValidPassword(password, user)) {
+                return res.render("passwordCambio", { error: "La nueva contraseña no puede ser igual a la anterior"});
+            }
+            user.password = createHash(password);
+            user.resetToken = undefined;
+            await user.save();
+            return res.redirect("/");
+        } catch(error) {
+            res.status(500).render("resetpassword", { error: "Error interno del servidor"});
+        }
+    }
+    
+    async cambiarRolPremium(req, res) {
+        const { uid } = req.params;
+        try {
+            const user = await User.findById(uid);
+            if(!user) {
+                return res.status(404).send("usuario no encontrado");
+            }
+            const nuevoRol = user.role === "usuario" ? "premium" : "usuario";
+            const actualizado = await User.findByIdAndUpdate(uid, { role: nuevoRol });
+            res.json(actualizado);
+        } catch (error) {
+            res.status(500).send("Error interno del servidor");
+        }
     }
 }
 

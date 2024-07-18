@@ -1,4 +1,4 @@
-const userDAO = require('./user.dao');
+const userDAO = require('./users.dao');
 const productDAO = require('./product.dao');
 const cartDAO = require('./cart.dao');
 const ticketDAO = require('./ticket.dao');

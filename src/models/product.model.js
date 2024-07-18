@@ -37,6 +37,10 @@ const productSchema = new mongoose.Schema({
     thumbnail: {
         type: [String], 
     },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user'
+    }
 },{ timestamps: true, versionKey: false } );
 
 

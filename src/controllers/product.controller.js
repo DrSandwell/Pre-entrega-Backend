@@ -23,8 +23,18 @@ class ProductController {
             res.status(500).send("Error al obtener productos");
         }
     }
+    async getProductsById(req, res) {
+        const pid = req.params.pid
+        try {
+            const prod = await productRep.getProdById(pid);
+            res.json(prod);
+        }
+        catch (error) {
+            res.status(500).send("Error al obtener producto");
+        }
+    }
 
-    async updateProduct(req,res) {
+    async updateProduct(req, res) {
         try {
             const id = req.params.pid;
             const productUpdate = req.body;
@@ -35,7 +45,7 @@ class ProductController {
         }
     }
 
-    async deleteProduct(req,res) {
+    async deleteProduct(req, res) {
         const id = req.params.pid;
         try {
             let producto = await productRep.deleteProduct(id);

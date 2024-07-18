@@ -1,5 +1,6 @@
 const Product = require("../models/product.model.js");
 const winston = require("winston");
+const User = require("../models/user.model.js");
 
 class ProductRepository {
     async addProduct({ title, description, price, img, code, stock, category, thumbnail }) {
@@ -13,6 +14,7 @@ class ProductRepository {
                 winston.warning("El codigo ingresado pertenece a otro producto");
                 return;
             }
+            const user = new User();
             const newProduct = new Product({
                 title,
                 description,
@@ -23,6 +25,7 @@ class ProductRepository {
                 category,
                 status: true,
                 thumbnail,
+                owner: user
             });
             await newProduct.save();
             return newProduct;
@@ -65,6 +68,17 @@ class ProductRepository {
         }
     }
 
+    async getProdById(id) {
+        try {
+            const product = await Product.findById(id);
+            if(!product) {
+                winston.warning("producto no encontrado" );
+            }
+            return product;
+        } catch(error) {
+            throw new Error("El producto no existe");
+        }
+    }
 
     async updateProduct(id, productoActualizado) {
         try {

@@ -1,9 +1,7 @@
 const winston = require("winston");
 const Product = require("../models/product.model.js");
 const CartRepository = require("../repositories/carts.repository.js");
-const ProductRepository = require("../repositories/product.repository.js")
 
-const productRep = new ProductRepository();
 const cartRep = new CartRepository();
 
 
@@ -125,6 +123,38 @@ class ViewsController {
     async ticket(req, res) {
         try {
             res.render("Ticket");
+        } catch (error) {
+            res.redirect("/404-not-found");
+        }
+    }
+
+    async renderResetPassword(req, res) {
+        try {
+            res.render("resetPassword");
+        } catch (error) {
+            res.redirect("/404-not-found");
+        }
+    }
+    
+    async renderCambioPassword(req, res) {
+        try {
+            res.render("passwordCambio");
+        } catch (error) {
+            res.redirect("/404-not-found");
+        }
+    }
+    
+    async renderConfirmacion(req, res) {
+        try {
+            res.render("confirmacion-envio");
+        } catch (error) {
+            res.redirect("/404-not-found");
+        }
+    }
+    
+    async renderProductDetail(req, res) {
+        try {
+            res.render("productDetail");
         } catch (error) {
             res.redirect("/404-not-found");
         }
