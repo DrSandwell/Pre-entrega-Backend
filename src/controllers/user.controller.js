@@ -3,10 +3,14 @@ const winston = require("winston");
 
 const User = require("../models/user.model.js");
 const CartModel = require("../models/cart.model.js");
+const EmailManager = require("../services/mailer/mailer.js");
 
 const { JWT_SECRET, COOKIE_TOKEN } = require("../config/config.js");
 const { createHash, isValidPassword } = require("../utils/hashbcryp.js");
 const DTO  = require("../dto/user.dto.js");
+const { generarResetToken } = require("../utils/tokenReset.js");
+
+const emailManager = new EmailManager();
 
 class UserController {
     async register(req, res) {
@@ -60,7 +64,7 @@ class UserController {
                 maxAge: 3600000,
                 httpOnly: true
             });
-            res.redirect("/home");
+            res.redirect("/api/users/profile");
         } catch (error) {
             winston.error(error);
             res.status(500).send("Error al iniciar sesion");

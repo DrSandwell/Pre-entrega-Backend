@@ -21,6 +21,8 @@ router.get("/reset-password", views.renderResetPassword),
 router.get("/password", views.renderCambioPassword),
 router.get("/confirmacion-envio", views.renderConfirmacion),
 router.get("/products/:pid", views.renderProductDetail),
+router.get("/pasarela-pago", views.renderPasarela);
+
 
 
 module.exports = router;

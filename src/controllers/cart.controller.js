@@ -3,7 +3,7 @@ const User = require("../models/user.model.js");
 const winston = require("winston");
 
 const CartRepository = require("../repositories/carts.repository.js");
-const {totalCompra, ticketNumberRandom} = require("../utils/util.js");
+const { totalCompra, ticketNumberRandom } = require("../utils/util.js");
 
 const cartRep = new CartRepository();
 
@@ -42,7 +42,7 @@ class CartController {
             res.redirect(`/carts/${ID}`)
         } catch (error) {
             res.status(500).send("Error al agregar productos al carrito");
-        }    
+        }
     }
 
     async updateProductsToCart(req, res) {
@@ -87,7 +87,7 @@ class CartController {
             res.status(500).send("Error al eliminar producto del carrito");
         }
     }
-    
+
     async emptyCart(req, res) {
         const cartId = req.params.cid;
         try {
@@ -105,16 +105,16 @@ class CartController {
     async finishPurchase(req, res) {
         const cartId = req.params.cid;
         try {
-            const cart = await cartRep.obtenerProductosDeCarrito(cartId);            
-            const userWithCart = await User.findOne({ cart: cartId }); 
+            const cart = await cartRep.obtenerProductosDeCarrito(cartId);
+            const userWithCart = await User.findOne({ cart: cartId });
             const ticket = new Ticket({
                 code: ticketNumberRandom(),
-                amount: totalAmount(cart.products),
+                amount: totalCompra(cart.products),
                 purchaser: userWithCart._id
-            });    
+            });
             await ticket.save();
-            await cart.save();    
-            res.redirect(`/${cartId}/purchase`);
+            console.log(cart)
+            res.render("Ticket", { ticket });
             console.error('Redirecting to purchase page');
         } catch (error) {
             winston.error('Error al realizar compra, intenta nuevamente');

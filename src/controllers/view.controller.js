@@ -1,8 +1,11 @@
 const winston = require("winston");
+
 const Product = require("../models/product.model.js");
 const CartRepository = require("../repositories/carts.repository.js");
+const ProductRepository = require("../repositories/product.repository.js");
 
 const cartRep = new CartRepository();
+const prodRep = new ProductRepository();
 
 
 class ViewsController {
@@ -10,12 +13,22 @@ class ViewsController {
         try {
             const { page = 1, limit = 6 } = req.query;
             const skip = (page - 1) * limit;
-            const products = await Product.find().skip(skip).limit(limit);
-            const totalProducts = await Product.countDocuments();
+            let queryOptions = {};
+            if (query) {
+                queryOptions = { category: query };
+            }
+            const sortOptions = {};
+            if (sort) {
+                if (sort === "asc" || sort === "desc") {
+                    sortOptions.price = sort === "asc" ? 1 : -1;
+                }
+            }
+            const products = await Product.find(queryOptions).sort(sortOptions).skip(skip).limit(limit);
+            const totalProducts = await Product.countDocuments(queryOptions);
             const totalPages = Math.ceil(totalProducts / limit);
             const hasPrevPage = page > 1;
             const hasNextPage = page < totalPages;
-            const newArray = products.map(producto => {
+            const newArray = products.map((producto) => {
                 const { _id, ...rest } = producto.toObject();
                 return { id: _id, ...rest };
             });
@@ -28,7 +41,7 @@ class ViewsController {
                 nextPage: page < totalPages ? parseInt(page) + 1 : null,
                 currentPage: parseInt(page),
                 totalPages,
-                cartId
+                cartId,
             });
         } catch (error) {
             res.redirect("/404-not-found");
@@ -135,7 +148,7 @@ class ViewsController {
             res.redirect("/404-not-found");
         }
     }
-    
+
     async renderCambioPassword(req, res) {
         try {
             res.render("passwordCambio");
@@ -143,7 +156,7 @@ class ViewsController {
             res.redirect("/404-not-found");
         }
     }
-    
+
     async renderConfirmacion(req, res) {
         try {
             res.render("confirmacion-envio");
@@ -151,10 +164,20 @@ class ViewsController {
             res.redirect("/404-not-found");
         }
     }
-    
+
     async renderProductDetail(req, res) {
+        const prodId = req.params.pid;
         try {
-            res.render("productDetail");
+            const product = await prodRep.getProdById(prodId);
+            res.render("productDetail", { product });
+        } catch (error) {
+            res.redirect("/404-not-found");
+        }
+    }
+
+    async renderPasarela(req, res) {
+        try {
+            res.render("pasarela");
         } catch (error) {
             res.redirect("/404-not-found");
         }
