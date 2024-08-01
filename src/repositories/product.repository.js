@@ -1,7 +1,6 @@
 const Product = require("../models/product.model.js");
 const userModel = require("../models/user.model.js");
 const winston = require("winston");
-const User = require("../models/user.model.js");
 
 class ProductRepository {
     async addProduct({ title, description, price, img, code, stock, category, thumbnail }, email) {

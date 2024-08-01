@@ -12,7 +12,7 @@ class CartController {
     async createCart(req, res) {
         try {
             const nuevoCarrito = await cartRep.createCart();
-            res.json(nuevoCarrito);
+            res.status(200).json(nuevoCarrito);
         } catch (error) {
             res.status(500).send("Error al crear carrito");
         }
@@ -25,7 +25,7 @@ class CartController {
             if (!products) {
                 return res.status(404).json({ error: "Carrito no encontrado" });
             }
-            res.json(products);
+            res.status(200).res.json(products);
         } catch (error) {
             res.status(500).send("Error al obtener productos del carrito");
         }
@@ -50,7 +50,7 @@ class CartController {
         const updatedProducts = req.body;
         try {
             const updatedCart = await cartRep.UpdateQuantity(cartId, updatedProducts);
-            res.json(updatedCart);
+            res.status(200).res.json(updatedCart);
         } catch (error) {
             res.status(500).send("Error al actualizar productos en el carrito");
         }

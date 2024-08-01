@@ -73,7 +73,8 @@ class UserController {
     async profile(req, res) {
         const dto = new DTO(req.user.first_name, req.user.last_name, req.user.email, req.user.role);
         const isAdmin = req.user.role === 'admin';
-        res.render("profile", { user: dto, isAdmin });
+        const isUser = req.user.role === "usuario";
+        res.render("profile", { user: dto, isAdmin, isUser });
     }
 
     async logout(req, res) {

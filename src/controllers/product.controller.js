@@ -18,7 +18,7 @@ class ProductController {
         try {
             let { limit = 10, page = 1, sort, query } = req.query;
             const producto = await productRep.getProducts(limit, page, sort, query);
-            res.json(producto);
+            res.status(200).res.json(producto);
         } catch (error) {
             res.status(500).send("Error al obtener productos");
         }
