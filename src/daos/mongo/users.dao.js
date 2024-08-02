@@ -1,6 +1,12 @@
+const userModel = require('../../models/user.model.js');
 const UserModel = require('../../models/user.model.js');
 
 class UserDAO {
+
+    async get(params) {
+        return userModel.find(params);
+    }
+
     async getUserByEmail(email) {
         return await UserModel.findOne({ email });
     }
@@ -14,4 +20,4 @@ class UserDAO {
     }
 }
 
-module.exports = new UserDAO();
+module.exports = UserDAO;
