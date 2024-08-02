@@ -10,6 +10,7 @@ const checkUserRole = (allowedRoles) => (req, res, next) => {
             } else {
                 const userRole = decoded.user.role;
                 if (allowedRoles.includes(userRole)) {
+                    req.user = decoded.user;
                     next();
                 } else {
                     res.redirect("/access-denied");

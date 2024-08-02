@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/users.test.js",
+    "test": "mocha test/supertest.test.js",
     "dev": "nodemon src/app.js"
   },
   "keywords": [],
@@ -39,7 +39,9 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "chai": "^4.2.0",
     "mocha": "^10.7.0",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "supertest": "^7.0.0"
   }
 }
