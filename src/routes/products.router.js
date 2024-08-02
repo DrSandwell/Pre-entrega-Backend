@@ -6,9 +6,9 @@ const passport = require("passport");
 const router = express.Router();
 const product = new ProductController(); 
 
-router.get("/", /* checkUserRole(['usuario']), */ product.getProducts);
+router.get("/", product.getProducts);
 router.post("/",  passport.authenticate("jwt", { session: false }), product.addProduct);
-router.get("/:pid", /* checkUserRole(['usuario']), */ product.getProductsById);
+router.get("/:pid", product.getProductsById);
 router.put("/:pid", /* checkUserRole(['admin']), checkUserRole(["premium"]), */ product.updateProduct);
 router.delete("/:pid", /* checkUserRole(['admin']), checkUserRole(["premium"]), */ product.deleteProduct);
 

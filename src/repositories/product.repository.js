@@ -67,16 +67,17 @@ class ProductRepository {
             throw new Error("Error al obtener los productos");
         }
     }
-
     async getProdById(id) {
         try {
             const product = await Product.findById(id);
-            if(!product) {
-                winston.warning("producto no encontrado" );
+            if (!product) {
+                winston.warning("Producto no encontrado con ID: " + id); // Agrega el ID para más contexto en los logs
+                return null; // Devuelve null si el producto no se encuentra
             }
             return product;
-        } catch(error) {
-            throw new Error("El producto no existe");
+        } catch (error) {
+            winston.error("Error al buscar el producto: " + error.message); // Log del error
+            throw new Error("Error al obtener el producto"); // Error más general para el controlador
         }
     }
 

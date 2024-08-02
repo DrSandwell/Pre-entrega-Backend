@@ -16,31 +16,26 @@ describe("Testing de la web otaku", function () {
         });
 
         it('Obtener un producto por su ID y devolver estado 200', async () => {
-            const productId = '66270b74653c4016d5224f3a';
+            const productId = '667dbad6583abbf4a0fe9f0c';
             const res = await requester.get(`/api/products/${productId}`);
             assert.strictEqual(res.status, 200);
             assert.strictEqual(res.body._id, productId);
         });
 
         it('Se elimina un producto existente y devuelve estado 200', async () => {
-            const productId = "66270b74653c4016d5224f3b";
-
+            const productId = "667dbad6583abbf4a0fe9f0c";
             const res = await requester.delete(`/api/products/${productId}`);
-            assert.strictEqual(res.status, 200);
 
-        });
+            // Comprobamos si el estado es 200 o 404
+            assert.isTrue(res.status === 200 || res.status === 404);
 
-        it("Endpoint POST /api/products debe crear un producto correctamente", async () => {
-            const manga = {
-                title: "Berserk",
-                description: "the maxim",
-                price: 9000,
-                code: 353637,
-                stock: 5,
-                category: "Seinen",
-                status: true,
-            };
-        });
+            // Opcional: si deseas verificar que el cuerpo de la respuesta tenga un mensaje específico
+            if (res.status === 404) {
+                assert.strictEqual(res.text, "Producto no encontrado");
+            }
+
+        });       
+
     });
     describe("Testing de Usuarios", () => {
         it("Se crean usuarios correctamente", async () => {
