@@ -34,6 +34,20 @@ describe("Testeamos el DAO de Usuarios", function () {
         assert.ok(resultado._id);
     })
 
+    it("El Dao Puede obtener un usuario por email",async function(){
+        let usuario = {
+            first_name: "Mirtha",
+            last_name: "Legrand",
+            email: "lachiqui@legrand.com",
+            password: 1234,
+            age: 21
+        }
+        await this.usersDao.createUser(usuario);
+
+        const UserBuscado = await this.usersDao.getBy({email: usuario.email});
+        assert.strictEqual(typeof UserBuscado, "object")
+    })
+
     after(async function () {
         await mongoose.disconnect()
     })

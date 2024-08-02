@@ -5,6 +5,10 @@ class UserDAO {
 
     async get(params) {
         return userModel.find(params);
+    }  
+
+    async getBy(email) {
+        return await UserModel.findOne(email);
     }
 
     async getUserByEmail(email) {
