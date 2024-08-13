@@ -7,7 +7,7 @@ const socket = io();
 let client;
 
 Swal.fire({
-    title: "Mi tienda online",
+    title: "Mi tienda otaku online",
     input: "text",
     text: "Cual es tu nombre?",
     inputValidator: (value) => {

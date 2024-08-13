@@ -1,0 +1,42 @@
+<nav>
+    <div>
+        {{#if this.isUser}}
+        <a href="/home">Inicio</a>
+        {{/if}}
+
+        {{#if this.isAdmin}}
+        <ul style="list-style: none; padding: 0; margin: 0; display: flex;">
+            <li style="margin-right: 20px;"><a href="/realtimeproducts">Administrador de productos</a></li>
+            <li><a href="/admin-users" target="_blank">Administrador de usuarios</a></li>
+        </ul>
+        {{/if}}
+
+        {{#if this.isUser}}
+        <ul style="list-style: none; padding: 0; margin: 0; display: flex;">
+            <li style="margin-right: 20px;"><a href="/home">Inicio</a></li>
+            <li style="margin-right: 20px;"><a href="/products">Todos los productos</a></li>
+        </ul>
+        {{/if}}
+
+        <div>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex;">
+                <li>
+                    <a href="#" title="{{user.email}}">
+                        {{user.name}} {{user.surName}}
+                    </a>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-right: 20px;"><a href="/api/users/profile">Mi perfil</a></li>
+                        {{#if isUser}}
+                        <li style="margin-right: 20px;"><a href="/chat">Chat</a></li>
+                        {{/if}}
+                        <li>
+                            <form action="/api/users/logout" method="POST" style="display: inline;">
+                                <button type="submit" style="background: none; border: none; color: red; cursor: pointer;">Salir</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema({
     cart: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cart',
-        default:[]
+        default: []
     },
     role: {
         type: String,
@@ -33,7 +33,11 @@ const userSchema = mongoose.Schema({
     resetToken: {
         token: String,
         expire: Date
+    },
+    last_connection: {
+        type: Date,
+        default: Date.now
     }
-}, { timestamps: true, versionKey:false });
+}, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('user', userSchema);

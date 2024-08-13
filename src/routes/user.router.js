@@ -15,4 +15,9 @@ router.get("/admin", passport.authenticate("jwt", { session: false }), user.admi
 router.post("/requestPasswordReset", user.requestPasswordReset);
 router.post("/reset-password", user.resetPassword);
 router.put("/premium/:uid", user.cambiarRolPremium);
+router.get("/", user.getUsers);
+router.get("/:uid", user.getUserById);
+router.put("/:uid", user.updateUser);
+router.delete("/:uid", user.deleteUser);
+
 module.exports = router;

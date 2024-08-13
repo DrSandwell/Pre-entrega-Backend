@@ -17,6 +17,8 @@ class ProductController {
     async getProducts(req, res) {
         try {
             let { limit = 10, page = 1, sort, query } = req.query;
+            limit = parseInt(limit);
+            page = parseInt(page);
             const producto = await productRep.getProducts(limit, page, sort, query);
             res.status(200).json(producto);
         } catch (error) {

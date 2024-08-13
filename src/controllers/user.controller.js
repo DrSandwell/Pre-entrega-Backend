@@ -2,15 +2,17 @@ const jwt = require("jsonwebtoken");
 const winston = require("winston");
 
 const User = require("../models/user.model.js");
+const UserRepository = require("../repositories/user.repository");
 const CartModel = require("../models/cart.model.js");
 const EmailManager = require("../services/mailer/mailer.js");
 
 const { JWT_SECRET, COOKIE_TOKEN } = require("../config/config.js");
 const { createHash, isValidPassword } = require("../utils/hashbcryp.js");
-const DTO  = require("../dto/user.dto.js");
+const DTO = require("../dto/user.dto.js");
 const { generarResetToken } = require("../utils/tokenReset.js");
 
 const emailManager = new EmailManager();
+const userRep = new UserRepository();
 
 class UserController {
     async register(req, res) {
@@ -64,6 +66,8 @@ class UserController {
                 maxAge: 3600000,
                 httpOnly: true
             });
+            userFound.last_connection = new Date();
+            await userFound.save();
             res.redirect("/api/users/profile");
         } catch (error) {
             winston.error(error);
@@ -78,22 +82,30 @@ class UserController {
     }
 
     async logout(req, res) {
-        res.clearCookie(COOKIE_TOKEN);
-        res.redirect("/");
+        try {
+            res.clearCookie(COOKIE_TOKEN);
+            res.redirect("/");
+        } catch (error) {
+            res.status(500).send("Error al cerrar sesion");
+        }
     }
 
     async admin(req, res) {
-        if (req.user.user.role !== "admin") {
-            return res.redirect("/access-denied")
+        try {
+            if (req.user.user.role !== "admin") {
+                return res.redirect("/access-denied")
+            }
+            res.render("admin");
+        } catch (error) {
+            res.status(500).send("Error interno del servidor");
         }
-        res.render("admin");
     }
-    
+
     async requestPasswordReset(req, res) {
         const { email } = req.body;
         try {
             const user = await User.findOne({ email });
-            if(!user) {
+            if (!user) {
                 return res.status(404).send("Usuario no encontrado");
             }
             const token = generarResetToken();
@@ -104,43 +116,83 @@ class UserController {
             await user.save();
             await emailManager.enviarCorreoRestableciminto(email, user.first_name, token);
             res.redirect("/confirmacion-envio");
-        }catch (error) {
+        } catch (error) {
             res.status(500).send("Error interno del servidor");
         }
     }
 
-    async resetPassword (req, res) {
+    async resetPassword(req, res) {
         const { email, password, token } = req.body;
-        try{
+        try {
             const user = await User.findOne({ email });
-            if(!user) {
+            if (!user) {
                 return res.render("passwordCambio", { error: "Usuario no encontrado" })
             }
             const resetToken = user.resetToken;
-            if(!resetToken || resetToken.token !== token) {
-                return res.render("resetpassword", {error : "Token invalido, intenta nuevamente"});
+            if (!resetToken || resetToken.token !== token) {
+                return res.render("resetpassword", { error: "Token invalido, intenta nuevamente" });
             }
             const now = new Date();
-            if(now > resetToken.expire){
-                return res.render("resetpassword", {error: "el token ha expirado"});
+            if (now > resetToken.expire) {
+                return res.render("resetpassword", { error: "el token ha expirado" });
             }
-            if(isValidPassword(password, user)) {
-                return res.render("passwordCambio", { error: "La nueva contraseña no puede ser igual a la anterior"});
+            if (isValidPassword(password, user)) {
+                return res.render("passwordCambio", { error: "La nueva contraseña no puede ser igual a la anterior" });
             }
             user.password = createHash(password);
             user.resetToken = undefined;
             await user.save();
             return res.redirect("/");
-        } catch(error) {
-            res.status(500).render("resetpassword", { error: "Error interno del servidor"});
+        } catch (error) {
+            res.status(500).render("resetpassword", { error: "Error interno del servidor" });
         }
     }
-    
+    async getUsers(req, res) {
+        try {
+            const allUsers = await userRep.getUsers();
+            res.status(200).json({ allUsers });
+        } catch {
+            res.status(500).send("Error al obtener usuarios");
+        }
+    }
+
+    async getUserById(req, res) {
+        const userID = req.params.uid;
+        try {
+            const user = await User.findById(userID);
+            res.status(200).json({ user });
+        } catch (error) {
+            res.status(500).send("Error al obtener usuario");
+        }
+    }
+
+    async updateUser(req, res) {
+        try {
+            const id = req.params.uid;
+            const userUpdate = req.body;
+            const update = await User.findByIdAndUpdate(id, userUpdate);
+            res.status(200).json({ usuario_actualizado: update });
+        } catch (error) {
+            res.status(500).send("Error al actualizar el usuario");
+        }
+    }
+
+    async deleteUser(req, res) {
+        const userId = req.params.uid;
+        try {
+            let user = await User.findByIdAndDelete(userId);
+            res.status(200).json({ Usuario_eliminado: user });
+        } catch (error) {
+            res.status(500).send("Error al eliminar el usuario");
+        }
+    }
+
+
     async cambiarRolPremium(req, res) {
         const { uid } = req.params;
         try {
             const user = await User.findById(uid);
-            if(!user) {
+            if (!user) {
                 return res.status(404).send("usuario no encontrado");
             }
             const nuevoRol = user.role === "usuario" ? "premium" : "usuario";

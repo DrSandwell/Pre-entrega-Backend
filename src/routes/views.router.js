@@ -1,11 +1,11 @@
 const express = require("express");
 const passport = require("passport");
-
 const ViewsController = require("../controllers/view.controller.js");
 const checkUserRole = require("../middlewares/checkrole.js");
-
+const ProductController = require("../controllers/product.controller");
 const router = express.Router();
 const views = new ViewsController();
+const product = new ProductController();
 
 router.get("/products", checkUserRole(['usuario']),passport.authenticate('jwt', { session: false }), views.products);
 router.get("/", views.login);
@@ -16,12 +16,12 @@ router.get("/chat", checkUserRole(['usuario']), views.chat);
 router.get("/carts/:cid", checkUserRole(['usuario']), views.cart);
 router.get("/404-not-found", views.notFound);
 router.get("/access-denied", views.denied);
-router.get("/:cid/purchase", checkUserRole(['usuario']), views.ticket);
 router.get("/reset-password", views.renderResetPassword),
 router.get("/password", views.renderCambioPassword),
 router.get("/confirmacion-envio", views.renderConfirmacion),
+router.get("/admin-users", views.adminUsers);
 router.get("/products/:pid", views.renderProductDetail),
-router.get("/pasarela-pago", views.renderPasarela);
+router.get("/products/update/:pid", views.productUpdate);
 
 
 

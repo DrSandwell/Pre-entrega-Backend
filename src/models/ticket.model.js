@@ -15,7 +15,11 @@ const ticketSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
         required: true
-    }
+    },
+    purchase_datetime: {
+        type: Date,
+        default: Date.now,
+        required: true },
 },{ timestamps: true, versionKey: false } );
 
 module.exports = mongoose.model('Ticket', ticketSchema);

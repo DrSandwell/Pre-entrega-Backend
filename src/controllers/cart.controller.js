@@ -3,9 +3,12 @@ const User = require("../models/user.model.js");
 const winston = require("winston");
 
 const CartRepository = require("../repositories/carts.repository.js");
+const EmailManager = require("../services/mailer/mailer.js");
+const DTO = require("../dto/user.dto.js");
 const { totalCompra, ticketNumberRandom } = require("../utils/util.js");
 
 const cartRep = new CartRepository();
+const mailer = new EmailManager();
 
 class CartController {
 
@@ -105,16 +108,31 @@ class CartController {
     async finishPurchase(req, res) {
         const cartId = req.params.cid;
         try {
+            const dto = new DTO(
+                req.user.first_name,
+                req.user.last_name,
+                req.user.email,
+                req.user.role
+            );
+            const isAdmin = req.user.role === "admin";
+            const isUser = req.user.role === "usuario";
+
             const cart = await cartRep.obtenerProductosDeCarrito(cartId);
             const userWithCart = await User.findOne({ cart: cartId });
+            const date = new Date();
+
             const ticket = new Ticket({
                 code: ticketNumberRandom(),
                 amount: totalCompra(cart.products),
-                purchaser: userWithCart._id
+                purchaser: userWithCart._id,
+                purchase_datetime: date
             });
+
             await ticket.save();
             console.log(cart)
-            res.render("Ticket", { ticket });
+            await mailer.enviarCorreoCompra(userWithCart.email, userWithCart.first_name, ticket._id);
+            await cartR.emptyCart(cartId);
+            res.render("Ticket", { ticket, email: userWithCart.email, user: dto, isAdmin, isUser });
             console.error('Redirecting to purchase page');
         } catch (error) {
             winston.error('Error al realizar compra, intenta nuevamente');

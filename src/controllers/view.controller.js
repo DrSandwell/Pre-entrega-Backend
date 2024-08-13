@@ -8,7 +8,6 @@ const DTO = require("../dto/user.dto.js");
 const cartRep = new CartRepository();
 const prodRep = new ProductRepository();
 
-
 class ViewsController {
     async products(req, res) {
         try {
@@ -20,7 +19,7 @@ class ViewsController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
-            const { page = 1, limit = 6 } = req.query;
+            const { page = 1, limit = 6, sort, query } = req.query;
             const skip = (page - 1) * limit;
             let queryOptions = {};
             if (query) {
@@ -221,7 +220,41 @@ class ViewsController {
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
             const product = await prodR.getProdById(prodId);
-            res.render("productDetail", { product, user: dto, isAdmin, isUser  });
+            res.render("productDetail", { product, user: dto, isAdmin, isUser });
+        } catch (error) {
+            res.redirect("/404-not-found");
+        }
+    }
+
+    async adminUsers(req, res) {
+        try {
+            const dto = new DTO(
+                req.user.first_name,
+                req.user.last_name,
+                req.user.email,
+                req.user.role
+            );
+            const isAdmin = req.user.role === "admin";
+            const isUser = req.user.role === "usuario";
+            res.render("adminUsers", { user: dto, isAdmin, isUser });
+        } catch (error) {
+            res.redirect("/404-not-found");
+        }
+    }
+
+    async productUpdate(req, res) {
+        const prodId = req.params.pid;
+        try {
+            const dto = new DTO(
+                req.user.first_name,
+                req.user.last_name,
+                req.user.email,
+                req.user.role
+            );
+            const isAdmin = req.user.role === "admin";
+            const isUser = req.user.role === "usuario";
+            const product = await prodRep.getProdById(prodId);
+            res.render("updateProduct", { product, user: dto, isAdmin, isUser });
         } catch (error) {
             res.redirect("/404-not-found");
         }

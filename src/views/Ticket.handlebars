@@ -1,6 +1,5 @@
 <div>
-    <h1>Gracias por preferir nuestra tienda</h1>
-    <h2>Ingresa los datos de envio.</h2>
+    <h1>Ingresa los datos de envio</h1>
     <div>
         <div>
             <strong>Id del comprador:</strong>
@@ -27,6 +26,14 @@
         {{/each}}
     </div>
     <div>
+        <div>
+            <strong>Fecha de la compra: </strong>
+        </div>
+        {{#each ticket}}
+        <p title="Orden de compra" class="text-center">{{purchase_datetime}}</p>
+        {{/each}}
+    </div>
+    <div>
         <form>
             <div>
                 <h1>Datos de envio</h1>
@@ -37,8 +44,7 @@
                 placeholder="Ingresa el barrio donde vives">
             <input type="text" id="direction"
                 placeholder="Ingresa la direccion donde recibiras tu envio">
-            <a href="/pasarela-pago">Metodos de
-                pago</a>
+            <a href="/pasarela-pago">Metodos de pago</a>
         </form>
     </div>
 </div>
