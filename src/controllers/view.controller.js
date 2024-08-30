@@ -1,4 +1,4 @@
-const winston = require("winston");
+const { logger } = require("../middlewares/loggerMiddleware.js");
 
 const Product = require("../models/product.model.js");
 const CartRepository = require("../repositories/carts.repository.js");
@@ -19,6 +19,7 @@ class ViewsController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
+            const isPremium = req.user.role === "premium";
             const { page = 1, limit = 6, sort, query } = req.query;
             const skip = (page - 1) * limit;
             let queryOptions = {};
@@ -46,6 +47,7 @@ class ViewsController {
                 user: dto,
                 isAdmin,
                 isUser,
+                isPremium,
                 hasPrevPage,
                 hasNextPage,
                 prevPage: page > 1 ? parseInt(page) - 1 : null,
@@ -70,6 +72,7 @@ class ViewsController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
+            const isPremium = req.user.role === "premium";
             const cart = await cartRep.obtenerProductosDeCarrito(cartId);
 
             if (!cart) {
@@ -88,7 +91,7 @@ class ViewsController {
                     cartId
                 };
             });
-            res.render("carts", { productos: productInCart, totalPurchase, cartId, user: dto, isAdmin, isUser });
+            res.render("carts", { productos: productInCart, totalPurchase, cartId, user: dto, isAdmin, isUser, isPremium });
         } catch (error) {
             res.redirect("/404-not-found");
         }
@@ -122,7 +125,8 @@ class ViewsController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
-            res.render("realtimeproducts", { user: dto, isAdmin, isUser });
+            const isPremium = req.user.role === "premium";
+            res.render("realtimeproducts", { user: dto, isAdmin, isUser, isPremium});
         } catch (error) {
             res.redirect("/404-not-found");
         }
@@ -138,7 +142,8 @@ class ViewsController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
-            res.render("chat", { user: dto, isAdmin, isUser });
+            const isPremium = req.user.role === "premium";
+            res.render("chat", { user: dto, isAdmin, isUser, isPremium });
         } catch (error) {
             res.redirect("/404-not-found");
         }
@@ -154,7 +159,8 @@ class ViewsController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
-            res.render("home", { user: dto, isAdmin, isUser });
+            const isPremium = req.user.role === "premium";
+            res.render("home", { user: dto, isAdmin, isUser, isPremium });
         } catch (error) {
             res.redirect("/404-not-found");
         }
@@ -219,8 +225,9 @@ class ViewsController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
+            const isPremium = req.user.role === "premium";
             const product = await prodR.getProdById(prodId);
-            res.render("productDetail", { product, user: dto, isAdmin, isUser });
+            res.render("productDetail", { product, user: dto, isAdmin, isPremium, isUser });
         } catch (error) {
             res.redirect("/404-not-found");
         }
@@ -236,7 +243,8 @@ class ViewsController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
-            res.render("adminUsers", { user: dto, isAdmin, isUser });
+            const isPremium = req.user.role === "premium";
+            res.render("adminUsers", { user: dto, isAdmin, isPremium, isUser });
         } catch (error) {
             res.redirect("/404-not-found");
         }

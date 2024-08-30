@@ -1,10 +1,11 @@
 const socket = require("socket.io");
-const winston = require("winston");
+const { logger } = require("../middlewares/loggerMiddleware.js");
 
 const ProductRepository = require("../repositories/product.repository.js");
 const MessageModel = require("../models/message.model.js");
 
 const product = new ProductRepository(); 
+const Message = new MessageModel()
 
 class SocketManager {
     constructor(httpServer) {

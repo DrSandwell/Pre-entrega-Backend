@@ -1,17 +1,17 @@
 const Product = require("../models/product.model.js");
 const userModel = require("../models/user.model.js");
-const winston = require("winston");
+const { logger } = require("../middlewares/loggerMiddleware.js");
 
 class ProductRepository {
     async addProduct({ title, description, price, img, code, stock, category, thumbnail }, email) {
         try {
             if (!title || !description || !price || !code || !stock || !category) {
-                winston.warning("Todos los campos son obligatorios");
+                logger.warning("Todos los campos son obligatorios");
                 return;
             }
             const ProductExist = await Product.findOne({ code: code });
             if (ProductExist) {
-                winston.warning("El codigo ingresado pertenece a otro producto");
+                logger.warning("El codigo ingresado pertenece a otro producto");
                 return;
             }
             const emailUser = await userModel.findOne(email);
@@ -30,6 +30,7 @@ class ProductRepository {
             await newProduct.save();
             return newProduct;
         } catch (error) {
+            logger.error("Error al crear producto:", error);
             throw new Error("Error al crear producto");
         }
     }
@@ -71,12 +72,12 @@ class ProductRepository {
         try {
             const product = await Product.findById(id);
             if (!product) {
-                winston.warning("Producto no encontrado con ID: " + id); // Agrega el ID para más contexto en los logs
+                logger.warning("Producto no encontrado con ID: " + id); // Agrega el ID para más contexto en los logs
                 return null; // Devuelve null si el producto no se encuentra
             }
             return product;
         } catch (error) {
-            winston.error("Error al buscar el producto: " + error.message); // Log del error
+            logger.error("Error al buscar el producto: " + error.message); // Log del error
             throw new Error("Error al obtener el producto"); // Error más general para el controlador
         }
     }
@@ -85,10 +86,10 @@ class ProductRepository {
         try {
             const update = await Product.findByIdAndUpdate(id, productoActualizado);
             if (!update) {
-                winston.warning("Producto no encontrado");
+                logger.warning("Producto no encontrado");
                 return null;
             }
-            winston.info("Producto actualizado");
+            logger.info("Producto actualizado");
             return update;
         } catch (error) {
             throw new Error("Error al actualizar el producto");
@@ -99,10 +100,10 @@ class ProductRepository {
         try {
             const deleteProd = await Product.findByIdAndDelete(id);
             if (!deleteProd) {
-                winston.warning("Producto no encontrado");
+                logger.warning("Producto no encontrado");
                 return null;
             }
-            winston.info("Producto eliminado");
+            logger.info("Producto eliminado");
             return deleteProd;
         } catch (error) {
             throw new Error("Error al eliminar el producto");

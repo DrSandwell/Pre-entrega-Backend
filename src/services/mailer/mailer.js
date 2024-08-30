@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const { GMAIL_PASSWORD, MAIL_USER } = require("../../config/config.js")
-const winston = require("winston");
+const { logger } = require("../../middlewares/loggerMiddleware.js");
+
 
 
 class EmailManager {
@@ -28,7 +29,7 @@ class EmailManager {
             };
             await this.transporter.sendMail(Opt);
         } catch (error) {
-            winston.error("Error al enviar Email:");
+            logger.error("Error al enviar Email:");
         }
     }
 
@@ -49,7 +50,7 @@ class EmailManager {
             };
             await this.transporter.sendMail(Opt);
         } catch (error) {
-            winston.error("Error al enviar el correo de restablecimiento");
+            logger.error("Error al enviar el correo de restablecimiento");
         }
     };
 }

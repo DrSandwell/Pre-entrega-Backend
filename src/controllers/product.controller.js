@@ -1,5 +1,4 @@
 const ProductRepository = require("../repositories/product.repository.js");
-const Product = require("../models/product.model.js");
 const productRep = new ProductRepository();
 
 

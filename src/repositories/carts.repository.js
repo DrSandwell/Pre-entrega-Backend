@@ -1,5 +1,5 @@
 const Cart = require("../models/cart.model.js");
-const winston = require("winston");
+const { logger } = require("../middlewares/loggerMiddleware.js");
 
 class CartRepository {
     async createCart() {
@@ -15,7 +15,7 @@ class CartRepository {
         try {
             const cart = await Cart.findById(idCarrito);
             if (!cart) {
-                winston.warning("El carrito no existe");
+                logger.warning("El carrito no existe");
                 return null;
             }
             return cart;

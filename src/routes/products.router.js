@@ -1,15 +1,13 @@
 const express = require("express");
 const checkUserRole = require("../middlewares/checkrole.js");
 const ProductController = require("../controllers/product.controller.js");
-const passport = require("passport");
 
 const router = express.Router();
 const product = new ProductController(); 
 
-router.get("/", checkUserRole(["admin"]), product.getProducts);
-router.post("/", checkUserRole(["usuario"]), passport.authenticate("jwt", { session: false }), product.addProduct);
-router.get("/:pid", checkUserRole(["usuario"]), product.getProductsById);
-router.put("/:pid", checkUserRole(['admin']), checkUserRole(["premium"]), product.updateProduct);
-router.delete("/:pid", checkUserRole(['admin']), checkUserRole(["premium"]), product.deleteProduct);
-
+router.get("/", checkUserRole(["usuario", "premium"]), product.getProducts);
+router.post("/", checkUserRole(["admin", "premium"]), product.addProduct);
+router.get("/:pid", checkUserRole(["usuario", "premium"]), product.getProductById);
+router.delete("/:pid", checkUserRole(["admin", "premium"]), product.deleteProduct);
+router.put("/:pid", checkUserRole(["admin", "premium"]), product.updateProduct);
 module.exports = router;

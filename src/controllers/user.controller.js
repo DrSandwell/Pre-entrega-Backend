@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const winston = require("winston");
-
+const { logger } = require("../middlewares/loggerMiddleware.js");
+const Cart = require("../models/cart.model");
 const User = require("../models/user.model.js");
 const UserRepository = require("../repositories/user.repository");
 const CartModel = require("../models/cart.model.js");
@@ -20,7 +20,7 @@ class UserController {
         try {
             const existeUsuario = await User.findOne({ email });
             if (existeUsuario) {
-                return res.status(400).send("El usuario ya existe");
+                return res.render("register", { userRegisterError: "El usuario ya esta registrado" });
             }
 
             const nuevoCarrito = new CartModel();
@@ -44,7 +44,7 @@ class UserController {
             res.redirect("/api/users/profile");
         } catch (error) {
             winston.error(error);
-            res.status(500).send("Error al registrar usuario");
+            res.render("register", { RegisterError: "Error al registrar usuario" });
         }
     }
     async login(req, res) {
@@ -53,11 +53,11 @@ class UserController {
             const userFound = await User.findOne({ email });
 
             if (!userFound) {
-                return res.status(401).send("Credenciales incorrectas");
+                return res.render("login", { incorrectEmail: "Mail no coincide con ninguna cuenta" });
             }
             const isValid = isValidPassword(password, userFound);
             if (!isValid) {
-                return res.status(401).send("Contraseña incorrecta");
+                return res.render("login", { incorrectPassword: "Contraseña incorrecta" });
             }
             const token = jwt.sign({ user: userFound }, JWT_SECRET, {
                 expiresIn: "1h"
@@ -71,14 +71,19 @@ class UserController {
             res.redirect("/api/users/profile");
         } catch (error) {
             winston.error(error);
-            res.status(500).send("Error al iniciar sesion");
+            res.render("login", { loginError: "Error al iniciar sesion" });
         }
     }
     async profile(req, res) {
-        const dto = new DTO(req.user.first_name, req.user.last_name, req.user.email, req.user.role);
-        const isAdmin = req.user.role === 'admin';
-        const isUser = req.user.role === "usuario";
-        res.render("profile", { user: dto, isAdmin, isUser });
+        try {
+            const dto = new DTO(req.user.first_name, req.user.last_name, req.user.email, req.user.role);
+            const isAdmin = req.user.role === 'admin';
+            const isUser = req.user.role === "usuario";
+            const isPremium = req.user.role === "premium";
+            res.render("profile", { user: dto, isAdmin, isUser, isPremium });
+        } catch (error) {
+            res.redirect("404-not-found");
+        }
     }
 
     async logout(req, res) {
@@ -86,7 +91,7 @@ class UserController {
             res.clearCookie(COOKIE_TOKEN);
             res.redirect("/");
         } catch (error) {
-            res.status(500).send("Error al cerrar sesion");
+            res.redirect("404-not-found");
         }
     }
 
@@ -106,7 +111,7 @@ class UserController {
         try {
             const user = await User.findOne({ email });
             if (!user) {
-                return res.status(404).send("Usuario no encontrado");
+                return res.render("resetpassword", { userError: "Usuario no encontrado" });
             }
             const token = generarResetToken();
             user.resetToken = {
@@ -149,8 +154,10 @@ class UserController {
     }
     async getUsers(req, res) {
         try {
-            const allUsers = await userRep.getUsers();
-            res.status(200).json({ allUsers });
+            const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+            await User.deleteMany({ last_connection: { $lt: twoDaysAgo } });
+            const allUsers = await User.find();
+            res.status(200).json({ allUsers, message: "Los usuarios inactivos han sido eliminados" });
         } catch {
             res.status(500).send("Error al obtener usuarios");
         }

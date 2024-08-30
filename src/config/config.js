@@ -18,5 +18,6 @@ module.exports = {
     NODE_ENV: process.env.NODE_ENV,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
-    SESSION_SECRET: process.env.SESSION_SECRET || 'default_session_secret'
+    SESSION_SECRET: process.env.SESSION_SECRET || 'default_session_secret',
+    MERCADO_PAGO: process.env.MERCADO_PAGO
 };

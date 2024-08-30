@@ -1,11 +1,10 @@
 const Ticket = require("../models/ticket.model.js");
 const User = require("../models/user.model.js");
-const winston = require("winston");
-
 const CartRepository = require("../repositories/carts.repository.js");
 const EmailManager = require("../services/mailer/mailer.js");
 const DTO = require("../dto/user.dto.js");
 const { totalCompra, ticketNumberRandom } = require("../utils/util.js");
+const { logger } = require("../middlewares/loggerMiddleware.js");
 
 const cartRep = new CartRepository();
 const mailer = new EmailManager();
@@ -116,6 +115,7 @@ class CartController {
             );
             const isAdmin = req.user.role === "admin";
             const isUser = req.user.role === "usuario";
+            const isPremium = req.user.role === "premium";
 
             const cart = await cartRep.obtenerProductosDeCarrito(cartId);
             const userWithCart = await User.findOne({ cart: cartId });
@@ -131,11 +131,11 @@ class CartController {
             await ticket.save();
             console.log(cart)
             await mailer.enviarCorreoCompra(userWithCart.email, userWithCart.first_name, ticket._id);
-            await cartR.emptyCart(cartId);
-            res.render("Ticket", { ticket, email: userWithCart.email, user: dto, isAdmin, isUser });
+            await cartRep.emptyCart(cartId);
+            res.render("Ticket", { ticket, email: userWithCart.email, user: dto, isAdmin, isUser, isPremium });
             console.error('Redirecting to purchase page');
         } catch (error) {
-            winston.error('Error al realizar compra, intenta nuevamente');
+            logger.error('Error al realizar compra, intenta nuevamente');
             res.status(500).json({ error: 'Error al comprar productos' });
         }
     }
