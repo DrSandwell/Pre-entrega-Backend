@@ -1,4 +1,15 @@
 <form action="/api/users/register" method="POST">
+    <h1>Crear Cuenta</h1>
+    {{#if userRegisterError}}
+    <div role="alert">
+        {{userRegisterError}}
+    </div>
+    {{/if}}
+    {{#if RegisterError}}
+    <div role="alert">
+        {{RegisterError}}
+    </div>
+    {{/if}}
     <label for="first_name">NOMBRE:</label>
     <input type="text" id="first_name" name="first_name">
     <br>

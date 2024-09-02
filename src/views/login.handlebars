@@ -1,10 +1,25 @@
 <main>
     <section>
         <h1>Iniciar sesión</h1>
+        {{#if incorrectEmail}}
+        <div role="alert">
+            {{incorrectEmail}}
+        </div>
+        {{/if}}
+        {{#if loginError}}
+        <div role="alert">
+            {{loginError}}
+        </div>
+        {{/if}}
         <form action="/api/users/login" method="POST">
             <label for="email">Correo electrónico:</label>
             <input type="email" id="email" name="email" required>
             <br><br>
+            {{#if incorrectPassword}}
+            <div role="alert">
+                {{incorrectPassword}}
+            </div>
+            {{/if}}
             <label for="password">Contraseña:</label>
             <input type="password" id="password" name="password" required>
             <br>

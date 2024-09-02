@@ -1,16 +1,18 @@
 <div>
-    <h1>Ingresa los datos de envio</h1>
+    <h1>Gracias por su compra</h1>
+    <h3>Revise su mail, para recibir el ticket de compra</h3>
     <div>
         <div>
-            <strong>Id del comprador:</strong>
+            <strong>Email del comprador:</strong>
         </div>
-        {{#each ticket}}
-        <p title="Id comprador">{{purchaser}}</p>
-        {{/each}}
+        {{#if user}}
+        <p title="Id comprador">{{user.email}}</p>
+        {{/if}}
     </div>
+
     <div>
         <div>
-            <strong>Orden de compra numero: </strong>
+            <strong>Orden de compra: </strong>
         </div>
         {{#each ticket}}
         <p title="Orden de compra">{{code}}</p>
@@ -18,33 +20,19 @@
     </div>
     <div>
         <div>
-            <strong>Costo total de la compra: </strong>
+            <strong>Fecha de compra: </strong>
         </div>
-        <span>$</span>
         {{#each ticket}}
-        <p title="Orden de compra" >{{amount}}</p>
+        <p title="Orden de compra">{{purchase_datetime}}</p>
         {{/each}}
     </div>
     <div>
         <div>
-            <strong>Fecha de la compra: </strong>
+            <strong>Costo total: </strong>
         </div>
+        <span>$</span>
         {{#each ticket}}
-        <p title="Orden de compra" class="text-center">{{purchase_datetime}}</p>
+        <p title="Orden de compra">{{amount}}</p>
         {{/each}}
-    </div>
-    <div>
-        <form>
-            <div>
-                <h1>Datos de envio</h1>
-            </div>
-            <input type="text" id="name" placeholder="Ingresa tu nombre">
-            <input type="text" id="city" placeholder="Ingresa la ciudad donde vives">
-            <input type="text" id="location"
-                placeholder="Ingresa el barrio donde vives">
-            <input type="text" id="direction"
-                placeholder="Ingresa la direccion donde recibiras tu envio">
-            <a href="/pasarela-pago">Metodos de pago</a>
-        </form>
-    </div>
+    </div>    
 </div>

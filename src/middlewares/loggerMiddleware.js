@@ -1,11 +1,4 @@
-const logger = require("../utils/logger");
 const winston = require("winston");
-
-const addLogger = (req, res, next) => {
-    req.logger = logger;
-    req.logger.http(`${req.method} en ${req.url} - ${new Date().toLocaleDateString()}`);
-    next();
-};
 
 const logger = winston.createLogger({
     level: 'info',
@@ -18,4 +11,3 @@ const logger = winston.createLogger({
     ]
 });
 module.exports = { logger };
-module.exports = addLogger;

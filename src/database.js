@@ -1,6 +1,6 @@
 const mongose = require("mongoose");
 const { MONGODB_URI } = require("./config/config.js");
-const winston = require("winston");
+const { logger } = require("./middlewares/loggerMiddleware.js");
 
 class DataBase {
     static #instance;
@@ -11,9 +11,9 @@ class DataBase {
         try {
             if (this.#instance) return this.#instance;
             this.#instance = new DataBase();
-            winston.info("mongoDB connected succesfully");
+            logger.info("mongoDB connected succesfully");
         } catch (error) {
-            winston.error(error);
+            logger.error(error);
         }
     }
 }

@@ -2,10 +2,10 @@ const socket = require("socket.io");
 const { logger } = require("../middlewares/loggerMiddleware.js");
 
 const ProductRepository = require("../repositories/product.repository.js");
-const MessageModel = require("../models/message.model.js");
+const MessageController = require("../controllers/message.controller.js");
 
-const product = new ProductRepository(); 
-const Message = new MessageModel()
+const product = new ProductRepository();
+const Message = new MessageController()
 
 class SocketManager {
     constructor(httpServer) {
@@ -14,8 +14,8 @@ class SocketManager {
     }
     async initSocketEvents() {
         this.io.on("connection", async (socket) => {
-            winston.info("Usuario conectado");       
-            socket.emit("products", await product.getProducts() );
+            logger.info("Usuario conectado");
+            socket.emit("products", await product.getProducts());
             socket.on("deleteProd", async (id) => {
                 await product.deleteProduct(id);
                 this.emitUpdatedProducts(socket);
@@ -25,9 +25,11 @@ class SocketManager {
                 this.emitUpdatedProducts(socket);
             });
             socket.on("message", async (data) => {
-                await MessageModel.create(data);
-                const messages = await MessageModel.find();
-                socket.emit("message", messages);
+                await Message.createMessage(data);
+                this.io.emit("chat", await Message.getMessages());
+            });
+            socket.on("clearchat", async () => {
+                await Message.deleteAllMessages();
             });
         });
     }
